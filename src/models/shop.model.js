@@ -42,4 +42,4 @@ var shopSchema = Schema(
 );
 
 //Export the model
-module.exports = mongoose.model(DOCUMENT_NAME, userSchema);
+module.exports = model(DOCUMENT_NAME, shopSchema);
