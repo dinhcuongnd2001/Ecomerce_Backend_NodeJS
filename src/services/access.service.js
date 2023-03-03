@@ -2,6 +2,9 @@
 const shopModel = require("../models/shop.model");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const KeyTokenService = require("./keyToken.service");
+const { createTokenPair } = require("../auth/authUtils");
+const { getInfoData } = require("../utils");
 const Roleshop = {
   SHOP: "SHOP",
   WRITER: "WRITER",
@@ -17,7 +20,7 @@ class AccessService {
       const holderShop = await shopModel.findOne({ email }).lean();
       if (holderShop) {
         return {
-          code: "xxx",
+          code: 400,
           message: "Shop already registered !",
         };
       }
@@ -31,11 +34,40 @@ class AccessService {
 
       if (newShop) {
         // created privateKey, publicKey
-        const { privateKey, publicKey } = crypto.generateKeyPairSync("rsa", {
-          modulusLength: 4096,
-        });
+        const privateKey = crypto.randomBytes(64).toString("hex");
+        const publicKey = crypto.randomBytes(64).toString("hex");
         // console.log({ privateKey, publicKey });
         // neu co thi luu vao store
+        const keyStore = await KeyTokenService.createKeyToken({
+          userId: newShop._id,
+          publicKey,
+          privateKey,
+        });
+
+        if (!keyStore) {
+          return {
+            code: 400,
+            message: "PublicKeyString error",
+          };
+        }
+
+        // Created token pair
+        const tokens = await createTokenPair(
+          { userId: newShop._id, email },
+          publicKey,
+          privateKey
+        );
+        console.log("Create Token Success::", tokens);
+        return {
+          code: 201,
+          metadata: {
+            shop: getInfoData({
+              fields: ["_id", "name", "email"],
+              object: newShop,
+            }),
+            tokens,
+          },
+        };
       }
     } catch (error) {
       return {

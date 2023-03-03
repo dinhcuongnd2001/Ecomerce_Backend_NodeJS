@@ -13,6 +13,7 @@ app.use(morgan("dev"));
 // morgan("tiny");
 app.use(helmet());
 app.use(compression());
+app.use(express.json());
 // *************************** init db ***************************
 
 require("./dbs/init.mongodb");
