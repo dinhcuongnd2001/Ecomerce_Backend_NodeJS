@@ -2,7 +2,7 @@
 
 const app = require("./src/app");
 
-const PORT = process.env.PORT || 3055;
+const PORT = process.env.PORT || 3052;
 
 const server = app.listen(PORT, () => {
   console.log(`WSE start with ${PORT}`);
