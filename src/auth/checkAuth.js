@@ -44,7 +44,13 @@ const permission = (permission) => {
     return next();
   };
 };
+const asynHandler = (fn) => {
+  return (req, res, next) => {
+    fn(req, res, next).catch(next);
+  };
+};
 module.exports = {
   apiKey,
   permission,
+  asynHandler,
 };

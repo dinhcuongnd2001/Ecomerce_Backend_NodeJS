@@ -5,6 +5,10 @@ const crypto = require("crypto");
 const KeyTokenService = require("./keyToken.service");
 const { createTokenPair } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
+const {
+  BadRequestError,
+  ConflictRequestError,
+} = require("../core/error.response");
 const Roleshop = {
   SHOP: "SHOP",
   WRITER: "WRITER",
@@ -19,10 +23,11 @@ class AccessService {
       //   lean giam tai rat nhieu so voi ko lean ss5
       const holderShop = await shopModel.findOne({ email }).lean();
       if (holderShop) {
-        return {
-          code: 400,
-          message: "Shop already registered !",
-        };
+        // return {
+        //   code: 400,
+        //   message: "Shop already registered !",
+        // };
+        throw new BadRequestError("Error: Shop already registered!");
       }
       const passwordHash = await bcrypt.hash(password, 10);
       const newShop = await shopModel.create({
@@ -45,10 +50,11 @@ class AccessService {
         });
 
         if (!keyStore) {
-          return {
-            code: 400,
-            message: "PublicKeyString error",
-          };
+          // return {
+          //   code: 400,
+          //   message: "PublicKeyString error",
+          // };
+          throw new BadRequestError("Error: PublicKeyString error");
         }
 
         // Created token pair
@@ -71,7 +77,7 @@ class AccessService {
       }
     } catch (error) {
       return {
-        code: "xxx",
+        code: error.status,
         message: error.message,
         status: "error",
       };
