@@ -8,7 +8,12 @@ const { getInfoData } = require("../utils");
 const {
   BadRequestError,
   ConflictRequestError,
+  AuthFailureError,
 } = require("../core/error.response");
+
+// service //
+const { findByEmail } = require("./shop.service");
+
 const Roleshop = {
   SHOP: "SHOP",
   WRITER: "WRITER",
@@ -17,6 +22,45 @@ const Roleshop = {
 };
 
 class AccessService {
+  /*
+  Login
+  B1. Check Email
+  B2. match password
+  B3. Create AT vs RT and save
+  B4. generate tokens
+  B5. get data return login
+  */
+  static login = async ({ email, password, refreshToken = null }) => {
+    // 1
+    const foundShop = await findByEmail({ email });
+    if (!foundShop) throw new BadRequestError("shop is not register");
+    // 2
+    const match = bcrypt.compare(password, foundShop.password);
+    if (!match) throw new AuthFailureError("Authentication error");
+    // 3
+    const privateKey = crypto.randomBytes(64).toString("hex");
+    const publicKey = crypto.randomBytes(64).toString("hex");
+    // 4
+    const token = await createTokenPair(
+      { userId: foundShop._id, email },
+      publicKey,
+      privateKey
+    );
+    await KeyTokenService.createKeyToken({
+      userId: foundShop._id,
+      refreshToken: token.refreshToken,
+      privateKey,
+      publicKey,
+    });
+    return {
+      shop: getInfoData({
+        fields: ["_id", "name", "email"],
+        object: foundShop,
+      }),
+      token,
+    };
+  };
+
   static signUp = async ({ name, email, password }) => {
     try {
       // step1: check email exists ?
