@@ -22,15 +22,18 @@ var shopSchema = Schema(
       required: true,
     },
     status: {
+      // active hay chưa active
       type: String,
       enum: ["active", "inactive"],
       default: "inactive",
     },
     verfify: {
+      // xác thực xem shop này đã đăng ký thành công hay chưa
       type: Schema.Types.Boolean,
       default: "false",
     },
     roles: {
+      // kiểm tra xem shop này có những quuyền gì, xem xóa, sản phẩm.
       type: Array,
       default: [],
     },
