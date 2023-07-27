@@ -119,6 +119,13 @@ class AccessService {
       };
     }
   };
+
+  static logout = async (keyStore) => {
+    // return (delKey = await KeyTokenService.removeKeyById(keyStore._id));
+    const delKey = await KeyTokenService.removeKeyById(keyStore._id);
+    console.log("delKey ::", delKey);
+    return delKey;
+  };
 }
 
 module.exports = AccessService;
