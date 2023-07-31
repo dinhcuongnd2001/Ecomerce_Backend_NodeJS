@@ -122,28 +122,19 @@ class AccessService {
   };
 
   static logout = async (keyStore) => {
-    // return (delKey = await KeyTokenService.removeKeyById(keyStore._id));
     const delKey = await KeyTokenService.removeKeyById(keyStore._id);
     return delKey;
   };
 
-  static handlerRefreshToken = async (refreshToken) => {
-    // Check Token Used
-    console.log("1 ::", refreshToken);
-    const foundToken = await KeyTokenService.findByRefreshToken(refreshToken);
-    if (!foundToken) throw new AuthFailureError("Shop not registered1");
-
-    // decode de lay thong tin kiem tra
-    const { userId, email } = await verifyJWT(
-      refreshToken,
-      foundToken.privateKey
-    );
-
-    if (foundToken.refreshTokensUsed.includes(refreshToken)) {
+  static handlerRefreshToken = async ({ refreshToken, keyStore, user }) => {
+    const { userId, email } = user;
+    if (keyStore.refreshTokensUsed.includes(refreshToken)) {
       // xoa tat ca token trong store
       await KeyTokenService.deleteKeyByUserId(userId);
       throw new ForbiddenError("something wrong happen !! pls relogin");
     }
+    if (keyStore.refreshToken !== refreshToken)
+      throw new ForbiddenError("Shop not register");
 
     // neu chua co su dung token thi kiem tra xem co ton tai user kia khong
     const foundShop = await findByEmail({ email });
@@ -152,11 +143,11 @@ class AccessService {
     // tao mot cap token moi
     const tokens = await createTokenPair(
       { userId, email },
-      foundToken.publicKey,
-      foundToken.privateKey
+      keyStore.publicKey,
+      keyStore.privateKey
     );
 
-    await foundToken.update({
+    await keyStore.update({
       $set: {
         refreshToken: tokens.refreshToken,
       },
@@ -165,7 +156,7 @@ class AccessService {
       },
     });
     return {
-      user: { userId, email },
+      user,
       tokens,
     };
   };
