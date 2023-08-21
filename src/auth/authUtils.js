@@ -57,7 +57,7 @@ const authentication = asynHandler(async (req, res, next) => {
     try {
       const decodeRefreshToken = JWT.decode(refreshToken, keyStore.privateKey);
       req.keyStore = keyStore;
-      req.user = decodeRefreshToken;
+      req.user = decodeRefreshToken; // {userId, email}
       req.refreshToken = refreshToken;
       return next();
     } catch (error) {
