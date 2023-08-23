@@ -20,7 +20,7 @@ var apiKeySchema = new Schema(
       default: true,
     },
     permissions: {
-      // chia ra các mức truy cập của khách hàng
+      // chia ra các mức truy cập của khách hàng .
       type: [String],
       require: true,
       enum: ["0000", "1111", "2222"],
