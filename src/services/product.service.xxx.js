@@ -25,6 +25,12 @@ class ProductFactory {
       throw new BadRequestError(`Invalid Product Type ${type}`);
     return new productClass(payload).createProduct();
   }
+
+  // query
+  static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isDraft: true };
+    return await this.findAllDraftsForShop({ query, limit, skip });
+  }
 }
 
 console.log("product Register ::", ProductFactory.productRegistry);
