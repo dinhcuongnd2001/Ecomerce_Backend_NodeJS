@@ -16,3 +16,7 @@ const findAllDraftsForShop = async ({ query, limit, skip }) => {
     .lean()
     .exec();
 };
+
+module.exports = {
+  findAllDraftsForShop,
+};

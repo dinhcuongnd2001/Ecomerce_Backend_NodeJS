@@ -7,6 +7,7 @@ const {
   furniture,
 } = require("../models/product.model");
 const { BadRequestError, ForbiddenError } = require("../core/error.response");
+const { findAllDraftsForShop } = require("../models/repositories/product.repo");
 // define 1 factory class de tao product
 class ProductFactory {
   /*
@@ -29,7 +30,7 @@ class ProductFactory {
   // query
   static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
     const query = { product_shop, isDraft: true };
-    return await this.findAllDraftsForShop({ query, limit, skip });
+    return await findAllDraftsForShop({ query, limit, skip });
   }
 }
 
