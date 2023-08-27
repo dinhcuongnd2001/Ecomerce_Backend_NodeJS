@@ -13,5 +13,6 @@ router.post("", asynHandler(productController.createProduct));
 // Query
 
 router.get("/drafts/all", asynHandler(productController.getAllDraftsForShop));
+router.post("/published/:id", asynHandler(productController.publishedProduct));
 
 module.exports = router;

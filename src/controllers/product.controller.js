@@ -32,6 +32,16 @@ class ProductController {
     }).send(res);
   };
 
+  publishedProduct = async (req, res, next) => {
+    new SuccessResponse({
+      message: "Published Product Success!",
+      metadata: await ProductService2.publishProduct({
+        product_shop: req.user.userId,
+        product_id: req.params.id,
+      }),
+    }).send(res);
+  };
+
   //  End Query
 }
 

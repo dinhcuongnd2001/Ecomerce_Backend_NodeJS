@@ -7,7 +7,10 @@ const {
   furniture,
 } = require("../models/product.model");
 const { BadRequestError, ForbiddenError } = require("../core/error.response");
-const { findAllDraftsForShop } = require("../models/repositories/product.repo");
+const {
+  findAllDraftsForShop,
+  publishProductByShop,
+} = require("../models/repositories/product.repo");
 // define 1 factory class de tao product
 class ProductFactory {
   /*
@@ -32,9 +35,13 @@ class ProductFactory {
     const query = { product_shop, isDraft: true };
     return await findAllDraftsForShop({ query, limit, skip });
   }
-}
 
-console.log("product Register ::", ProductFactory.productRegistry);
+  // update pusblish
+
+  static async publishProduct({ product_shop, product_id }) {
+    return await publishProductByShop({ product_shop, product_id });
+  }
+}
 
 //  define base product class
 
