@@ -35,6 +35,7 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
 };
 
 const authentication = asynHandler(async (req, res, next) => {
+  console.log("called in authentication at", new Date().toISOString());
   /*
     1 - check userId missing?
     2 - get accessToken.

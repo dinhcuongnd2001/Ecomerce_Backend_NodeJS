@@ -7,6 +7,12 @@ const {
   furniture,
 } = require("../models/product.model");
 const { BadRequestError, ForbiddenError } = require("../core/error.response");
+const {
+  findAllDraftsForShop,
+  publishProductByShop,
+  getAllPublishProduct,
+} = require("../models/repositories/product.repo");
+
 // define 1 factory class de tao product
 class ProductFactory {
   /*
@@ -25,9 +31,24 @@ class ProductFactory {
       throw new BadRequestError(`Invalid Product Type ${type}`);
     return new productClass(payload).createProduct();
   }
-}
 
-console.log("product Register ::", ProductFactory.productRegistry);
+  // query
+  static async findAllDraftsForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isDraft: true };
+    return await findAllDraftsForShop({ query, limit, skip });
+  }
+
+  static async findAllPublishForShop({ product_shop, limit = 50, skip = 0 }) {
+    const query = { product_shop, isPublished: true };
+    return await getAllPublishProduct({ query, limit, skip });
+  }
+
+  // update pusblish
+
+  static async publishProduct({ product_shop, product_id }) {
+    return await publishProductByShop({ product_shop, product_id });
+  }
+}
 
 //  define base product class
 
