@@ -35,7 +35,6 @@ const createTokenPair = async (payload, publicKey, privateKey) => {
 };
 
 const authentication = asynHandler(async (req, res, next) => {
-  console.log("called in authentication at", new Date().toISOString());
   /*
     1 - check userId missing?
     2 - get accessToken.
@@ -65,6 +64,7 @@ const authentication = asynHandler(async (req, res, next) => {
       throw new AuthFailureError("Invalid Request");
     }
   }
+
   const accessToken = req.headers[HEADER.AUTHORIZATION];
   if (!accessToken) throw new AuthFailureError("Invalid Request");
 
@@ -73,6 +73,7 @@ const authentication = asynHandler(async (req, res, next) => {
     if (userId !== decodeUser.userId)
       throw new AuthFailureError("Invalid Request");
     req.keyStore = keyStore;
+    req.user = decodeUser;
     return next();
   } catch (error) {
     throw new AuthFailureError("Invalid Request");
